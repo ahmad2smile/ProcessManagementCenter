@@ -10,5 +10,8 @@ namespace ProcessManagementCenter.Domain
         public MinerType Type { get; set; }
         public WorkUnit WorkUnit { get; set; }
         public List<MinerState> States { get; set; }
+
+        public int ShiftId { get; set; }
+        public Shift Shift { get; set; }
     }
 }

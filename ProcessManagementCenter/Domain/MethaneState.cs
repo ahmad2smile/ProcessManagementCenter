@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ProcessManagementCenter.Domain
+﻿namespace ProcessManagementCenter.Domain
 {
     public class MethaneState
     {

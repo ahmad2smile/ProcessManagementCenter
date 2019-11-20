@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ProcessManagementCenter.Domain
 {
@@ -12,5 +13,7 @@ namespace ProcessManagementCenter.Domain
         public bool IsProductionShift { get; set; }
         public DateTime TimeToFirstOperate { get; set; }
         public DateTime TimeToLastOperate { get; set; }
+
+        public List<Miner> Miners { get; set; }
     }
 }
