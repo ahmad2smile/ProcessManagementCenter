@@ -81,7 +81,7 @@ namespace ProcessManagementCenter.Controllers
             _context.Shifts.Add(shift);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetShift", new { id = shift.Id }, shift);
+            return CreatedAtAction(nameof(GetShift), new { id = shift.Id }, shift);
         }
 
         // DELETE: api/Shifts/5
