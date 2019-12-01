@@ -1,0 +1,29 @@
+version: "3.4"
+
+services:
+  postgres:
+    container_name: "postgres"
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+  processmanagementcenter:
+    image: ${DOCKER_REGISTRY-}processmanagementcenter
+    build:
+      context: .
+      dockerfile: ProcessManagementCenter/Development.Dockerfile
+    networks:
+      - app-network
+  notifications:
+    image: ${DOCKER_REGISTRY-}notifications
+    build:
+      context: .
+      dockerfile: Notifications/Development.Dockerfile
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge

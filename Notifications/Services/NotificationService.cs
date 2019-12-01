@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.NotificationHubs;
+﻿using Microsoft.Azure.NotificationHubs;
 using Microsoft.Extensions.Configuration;
 using Notifications.Domain;
+using System;
+using System.Threading.Tasks;
 using Notification = Notifications.Domain.Notification;
 
 namespace Notifications.Services
@@ -29,17 +29,17 @@ namespace Notifications.Services
             {
                 case Platform.Android:
                     payload =
-                        $@"<toast><visual><binding template=""ToastText01""><text id=""1"">{notification.Message}</text></binding></visual></toast>";
+                        $@"<toast><visual><binding template=""ToastText01""><text id=""1"">{notification.NotificationType.Name}</text></binding></visual></toast>";
                     result = await _hub.SendFcmNativeNotificationAsync(payload);
                     break;
 
                 case Platform.Iphone:
-                    payload = $"{{\"aps\":{{\"alert\":\": {notification.Message}\"}}}}";
+                    payload = $"{{\"aps\":{{\"alert\":\": {notification.NotificationType.Name}\"}}}}";
                     result = await _hub.SendAppleNativeNotificationAsync(payload);
                     break;
 
                 case Platform.Web:
-                    payload = $"{{ \"data\" : {{\"message\":\"{notification.Message}\"}}}}";
+                    payload = $"{{ \"data\" : {{\"message\":\"{notification.NotificationType.Name}\"}}}}";
                     result = await _hub.SendFcmNativeNotificationAsync(payload); //TODO: Replace with Self Managed Web Notifications
                     break;
 

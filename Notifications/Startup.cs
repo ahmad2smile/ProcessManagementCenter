@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Notifications.Models;
 using Notifications.Services;
 
 namespace Notifications
@@ -21,6 +23,9 @@ namespace Notifications
             services.AddControllers();
 
             services.AddSingleton<INotificationService, NotificationService>();
+
+            services.AddDbContext<NotificationContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("NotificationContext")));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
