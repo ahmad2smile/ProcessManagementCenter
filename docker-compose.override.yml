@@ -1,14 +1,5 @@
 version: "3.4"
 
 services:
-  processmanagementcenter:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "5000:5000"
-
-  notifications:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "5001:5000"
+  api-gateway:
+    

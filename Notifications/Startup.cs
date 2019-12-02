@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Notifications.Context;
+using Notifications.Context.Commands;
 using Notifications.Services;
 
 namespace Notifications
@@ -23,6 +24,7 @@ namespace Notifications
             services.AddControllers();
 
             services.AddSingleton<INotificationService, NotificationService>();
+            services.AddSingleton<IPublishNotificationCommand, PublishNotificationCommand>();
 
             services.AddDbContext<NotificationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("NotificationContext")));

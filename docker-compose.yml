@@ -10,20 +10,42 @@ services:
       - "5432:5432"
     networks:
       - app-network
-  processmanagementcenter:
+  api-gateway:
+    container_name: "api-gateway"
     image: ${DOCKER_REGISTRY-}processmanagementcenter
     build:
       context: .
       dockerfile: ProcessManagementCenter/Development.Dockerfile
+    volumes:
+      - "./ProcessManagementCenter/Context:/src/ProcessManagementCenter/Context"
+      - "./ProcessManagementCenter/Controllers:/src/ProcessManagementCenter/Controllers"
+      - "./ProcessManagementCenter/Domain:/src/ProcessManagementCenter/Domain"
+      - "./ProcessManagementCenter/Migrations:/src/ProcessManagementCenter/Migrations"
+      - "./ProcessManagementCenter/Services:/src/ProcessManagementCenter/Services"
     networks:
       - app-network
-  notifications:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000:5000"
+  notifications-service:
+    container_name: "notifications-service"
     image: ${DOCKER_REGISTRY-}notifications
     build:
       context: .
       dockerfile: Notifications/Development.Dockerfile
+    volumes:
+      - "./Notifications/Context:/src/Notifications/Context"
+      - "./Notifications/Controllers:/src/Notifications/Controllers"
+      - "./Notifications/Domain:/src/Notifications/Domain"
+      - "./Notifications/Migrations:/src/Notifications/Migrations"
+      - "./Notifications/Services:/src/Notifications/Services"
     networks:
       - app-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5001:5000"
 networks:
   app-network:
     driver: bridge

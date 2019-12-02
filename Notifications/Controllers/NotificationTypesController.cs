@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Notifications.Context;
 using Notifications.Domain;
 using System.Collections.Generic;
@@ -13,10 +14,12 @@ namespace Notifications.Controllers
     public class NotificationTypesController : ControllerBase
     {
         private readonly NotificationContext _context;
+        private readonly ILogger<NotificationTypesController> _logger;
 
-        public NotificationTypesController(NotificationContext context)
+        public NotificationTypesController(NotificationContext context, ILogger<NotificationTypesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/NotificationTypes
@@ -78,10 +81,19 @@ namespace Notifications.Controllers
         [HttpPost]
         public async Task<ActionResult<NotificationType>> PostNotificationType(NotificationType notificationType)
         {
+            var typeAlreadyExists = _context.NotificationTypes.Any(nt => nt.Code == notificationType.Code);
+
+            if (typeAlreadyExists)
+            {
+                return BadRequest(new { message = $"Notification Type of Code: {notificationType.Code} already exists" });
+            }
+
+            _logger.LogDebug("Adding Notification Type: {notificationType}", notificationType);
+
             _context.NotificationTypes.Add(notificationType);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetNotificationType", new { id = notificationType.Id }, notificationType);
+            return CreatedAtAction(nameof(GetNotificationType), new { id = notificationType.Id }, notificationType);
         }
 
         // DELETE: api/NotificationTypes/5
