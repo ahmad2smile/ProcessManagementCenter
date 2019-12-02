@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Notifications.Context;
 using Notifications.Domain;
-using Notifications.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Notifications.Domain;
 
-namespace Notifications.Models
+namespace Notifications.Context
 {
     public class NotificationContext : DbContext
     {
