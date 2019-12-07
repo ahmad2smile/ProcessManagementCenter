@@ -8,7 +8,8 @@ namespace ProcessManagementCenter.Domain
         public NotificationStatus NotificationStatus { get; set; }
         public DateTime CreatedAt { get; set; }
         public int MinerId { get; set; }
-        public string? MinerName { get; set; }
+        public Miner Miner { get; set; }
+        public MineArea MineArea { get; set; }
         public NotificationType NotificationType { get; set; }
     }
 }

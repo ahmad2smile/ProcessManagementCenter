@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ProcessManagementCenter.Controllers
 {
@@ -12,7 +12,7 @@ namespace ProcessManagementCenter.Controllers
     {
         private static readonly string[] Summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            "GateWay", "Gateway", "Gateway", "Gateway", "Gateway", "Gateway", "Gateway", "Gateway", "Gateway", "Gateway"
         };
 
         private readonly ILogger<WeatherForecastController> _logger;

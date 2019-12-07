@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProcessManagementCenter.Models;
+using ProcessManagementCenter.Context.Commands;
+using ProcessManagementCenter.Controllers;
+using ProcessManagementCenter.Services;
 
 namespace ProcessManagementCenter
 {
@@ -21,9 +22,21 @@ namespace ProcessManagementCenter
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("corsAllPolicy",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                    });
+            });
 
-            services.AddDbContext<ApplicationContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DbConnectionString")));
+            services.AddSignalR();
+            services.AddSingleton<IWebPushService, WebPushService>();
+            services.AddSingleton<IRegisterSubscriptionCommand, RegisterSubscriptionCommand>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -34,6 +47,9 @@ namespace ProcessManagementCenter
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors("corsAllPolicy");
+
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -41,6 +57,7 @@ namespace ProcessManagementCenter
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ApplicationHub>("/applicationhub");
             });
         }
     }
