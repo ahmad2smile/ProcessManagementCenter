@@ -80,10 +80,19 @@ namespace Notifications.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Subscription>> PostSubscription([Bind("Id,Name,PushEndpoint,PushP256DH,PushAuth")] Subscription subscription)
+        public async Task<ActionResult<Subscription>> PostSubscription([Bind("Id,Name,DeviceId,PushEndpoint,PushP256Dh,PushAuth")] Subscription subscription)
         {
             try
             {
+                var existingSubscription = await _context.Subscriptions.FirstOrDefaultAsync(s => s.DeviceId == subscription.DeviceId);
+
+                if (existingSubscription != null)
+                {
+                    await PutSubscription(existingSubscription.Id, subscription);
+
+                    return Ok();
+                }
+
                 _context.Subscriptions.Add(subscription);
                 await _context.SaveChangesAsync();
 
@@ -93,7 +102,7 @@ namespace Notifications.Controllers
             {
                 _logger.LogError("Error while trying to add new Subscription {exception}", exception);
 
-                return BadRequest("Unable to register subscription");
+                return BadRequest(exception.Message);
             }
         }
 

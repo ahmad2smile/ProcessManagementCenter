@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using ProcessManagementCenter.Domain;
+using ProcessManagementCenter.Utils;
 using System.Threading.Tasks;
 using WebPush;
 
@@ -25,18 +24,7 @@ namespace ProcessManagementCenter.Services
         {
             var pushSubscription = new PushSubscription(subscription.PushEndpoint, subscription.PushP256Dh, subscription.PushAuth);
 
-            var contractResolver = new DefaultContractResolver // TODO: Move out serialize logic to utils
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            };
-
-            var payload = JsonConvert.SerializeObject(notification, new JsonSerializerSettings
-            {
-                ContractResolver = contractResolver,
-                Formatting = Formatting.Indented
-            });
-
-            return _webPushClient.SendNotificationAsync(pushSubscription, payload, _vapidDetails);
+            return _webPushClient.SendNotificationAsync(pushSubscription, Serializer.ToJsonString(notification), _vapidDetails);
         }
     }
 }

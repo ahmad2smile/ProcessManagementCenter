@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ProcessManagementCenter.Domain;
+using ProcessManagementCenter.Utils;
 using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ProcessManagementCenter.Context.Commands
@@ -27,11 +27,12 @@ namespace ProcessManagementCenter.Context.Commands
         {
             try
             {
-                var result = await _client.PostAsync("/api/Subscriptions",
-                    new StringContent(
-                        subscription.ToString(),
-                        Encoding.UTF8,
-                        "application/json"));
+                var result = await _client.PostAsync("/api/Subscriptions", Serializer.ToStringContent(subscription));
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    throw new Exception(result.Content.ToString());
+                }
 
                 _logger.LogDebug($"Subscribed Device {subscription.Id}, with Status: {result.StatusCode}");
 
