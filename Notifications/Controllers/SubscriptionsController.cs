@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Notifications.Context;
 using Notifications.Domain;
+using Notifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +18,24 @@ namespace Notifications.Controllers
     {
         private readonly NotificationContext _context;
         private readonly ILogger<SubscriptionsController> _logger;
+        private readonly INotificationService _notificationService;
+        private readonly IConfiguration _configuration;
 
-        public SubscriptionsController(NotificationContext context, ILogger<SubscriptionsController> logger)
+        public SubscriptionsController(NotificationContext context,
+            ILogger<SubscriptionsController> logger,
+            INotificationService notificationService,
+            IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
+            _notificationService = notificationService;
+            _configuration = configuration;
+        }
+
+        [HttpGet("vapid-key")]
+        public ActionResult<string> GetPublicVapidKey()
+        {
+            return Ok(_configuration["VAPID:public"]);
         }
 
         // GET: api/Subscriptions
@@ -80,7 +95,7 @@ namespace Notifications.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Subscription>> PostSubscription([Bind("Id,Name,DeviceId,PushEndpoint,PushP256Dh,PushAuth")] Subscription subscription)
+        public async Task<ActionResult<Subscription>> PostSubscription([Bind("Id,MineSiteId,DeviceId,PushEndpoint,PushP256Dh,PushAuth")] Subscription subscription)
         {
             try
             {
@@ -95,6 +110,19 @@ namespace Notifications.Controllers
 
                 _context.Subscriptions.Add(subscription);
                 await _context.SaveChangesAsync();
+
+                var notification = new Notification
+                {
+                    NotificationStatus = NotificationStatus.Active,
+
+                    NotificationType = new NotificationType
+                    {
+                        Code = "SUBSCRIPTION",
+                        Name = "Successfully subscribed to the notifications"
+                    }
+                };
+
+                await _notificationService.SendToSubscription(notification, subscription);
 
                 return Ok();
             }

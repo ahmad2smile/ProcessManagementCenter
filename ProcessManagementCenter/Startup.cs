@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProcessManagementCenter.Context.Commands;
 using ProcessManagementCenter.Controllers;
-using ProcessManagementCenter.Services;
 
 namespace ProcessManagementCenter
 {
@@ -35,7 +34,6 @@ namespace ProcessManagementCenter
             });
 
             services.AddSignalR();
-            services.AddSingleton<IWebPushService, WebPushService>();
             services.AddSingleton<IRegisterSubscriptionCommand, RegisterSubscriptionCommand>();
         }
 

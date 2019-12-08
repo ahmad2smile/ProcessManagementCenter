@@ -7,6 +7,7 @@ namespace Notifications.Domain
         public int Id { get; set; }
         public int MinerId { get; set; }
         public int ShiftId { get; set; }
+        public int MineSiteId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? AcknowledgedAt { get; set; }
         public DateTime? DismissedAt { get; set; }

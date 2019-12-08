@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ProcessManagementCenter.Context.Commands;
 using ProcessManagementCenter.Domain;
-using ProcessManagementCenter.Services;
 using System;
 using System.Threading.Tasks;
 
@@ -16,19 +15,16 @@ namespace ProcessManagementCenter.Controllers
     {
         private readonly IHubContext<ApplicationHub> _hubContext;
         private readonly IConfiguration _configuration;
-        private readonly IWebPushService _webPushService;
         private readonly IRegisterSubscriptionCommand _registerSubscriptionCommand;
         private readonly ILogger<NotificationsController> _logger;
 
         public NotificationsController(IHubContext<ApplicationHub> hubContext,
             IConfiguration configuration,
-            IWebPushService webPushService,
             IRegisterSubscriptionCommand registerSubscriptionCommand,
             ILogger<NotificationsController> logger)
         {
             _hubContext = hubContext;
             _configuration = configuration;
-            _webPushService = webPushService;
             _registerSubscriptionCommand = registerSubscriptionCommand;
             _logger = logger;
         }
@@ -36,7 +32,7 @@ namespace ProcessManagementCenter.Controllers
         [HttpGet("vapid-key")]
         public ActionResult<string> GetPublicVapidKey()
         {
-            return Ok(_configuration["VAPID:public"]);
+            return Ok(_configuration["VAPID:public"]); // TODO: Fetch from Notification Service
         }
 
         [HttpPost("subscription")]
@@ -44,27 +40,16 @@ namespace ProcessManagementCenter.Controllers
         {
             try
             {
+                subscription.MineSiteId = 1; // TODO: Replace with real fetch from Node API
+
                 await _registerSubscriptionCommand.Handler(subscription);
 
                 _logger.LogDebug("Subscribing for subscription," +
                                  $"id: {subscription.Id}," +
-                                 $"name: {subscription.Name}," +
+                                 $"name: {subscription.MineSiteId}," +
                                  $"endpoint: {subscription.PushEndpoint}");
 
-                var notification = new Notification
-                {
-                    NotificationStatus = NotificationStatus.InActive,
-
-                    NotificationType = new NotificationType
-                    {
-                        Code = "SUBSCRIPTION",
-                        Name = "Successfully subscribed to the notifications"
-                    }
-                };
-
-                await _webPushService.SendNotification(subscription, notification);
-
-                return Ok(notification);
+                return Ok();
             }
             catch (Exception exception)
             {

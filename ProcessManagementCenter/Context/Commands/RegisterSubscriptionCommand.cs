@@ -34,13 +34,13 @@ namespace ProcessManagementCenter.Context.Commands
                     throw new Exception(result.Content.ToString());
                 }
 
-                _logger.LogDebug($"Subscribed Device {subscription.Id}, with Status: {result.StatusCode}");
+                _logger.LogDebug($"Subscribed Device {subscription.DeviceId}, with Status: {result.StatusCode}");
 
                 return true;
             }
             catch (Exception exception)
             {
-                var errorMessage = $"Error Subscribing the Device {subscription.Id}, with Error: {exception.Message}, on Service: {_client.BaseAddress}";
+                var errorMessage = $"Error Subscribing the Device {subscription.DeviceId}, with Error: {exception.Message}, on Service: {_client.BaseAddress}";
                 _logger.LogError(errorMessage);
 
                 throw new Exception(errorMessage);

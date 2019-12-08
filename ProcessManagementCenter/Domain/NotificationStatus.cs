@@ -4,6 +4,6 @@
     {
         Active,
         Acknowledged,
-        InActive
+        Inactive
     }
 }
